@@ -52,4 +52,19 @@ router.post("/register", async (req, res) => {
   console.log(data);
 });
 
+router.post("/login", async (req, res) => {
+  const exist = await registerModel.findOne({
+    email: req.body.email,
+    password: req.body.password,
+  });
+
+  if (!exist) {
+    res.json({ message: "no" });
+    console.log("nooo");
+  } else {
+    res.json({ message: "matched" });
+    console.log("matched!!!");
+  }
+});
+
 module.exports = router;
