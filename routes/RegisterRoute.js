@@ -9,6 +9,8 @@ router.post("/register", async (req, res) => {
   //create instance of that model
   const data = new registerModel(req.body);
 
+  console.log(req.body);
+
   //this exist returns the document of that matched email
   const exist = await registerModel.findOne({ email: req.body.email });
 
@@ -58,11 +60,13 @@ router.post("/login", async (req, res) => {
     password: req.body.password,
   });
 
+  console.log(exist, "exist");
+
   if (!exist) {
     res.json({ message: "no" });
     console.log("nooo");
   } else {
-    res.json({ message: "matched" });
+    res.json({ message: "matched", username: exist.username });
     console.log("matched!!!");
   }
 });
