@@ -18,8 +18,27 @@ router.post("/chat", (req, res) => {
     });
 });
 
-router.get("/chat", (req, res) => {
+router.get("/chat", async (req, res) => {
   console.log(req.query);
+
+  const { sender, receiver } = req.query;
+
+  const data = await chatModel
+    .find({
+      $or: [
+        {
+          sender,
+          receiver,
+        },
+        {
+          sender: receiver,
+          receiver: sender,
+        },
+      ],
+    })
+    .sort("createdAt");
+
+    console.log(data)
 });
 
 module.exports = router;
