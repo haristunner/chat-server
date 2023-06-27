@@ -21,6 +21,34 @@ const io = new Server(server, {
   },
 });
 
+require("dotenv").config();
+
+app.use(express.json());
+
+const port = process.env.PORT || 8000;
+
+db.connect(process.env.URI)
+  .then((on) => {
+    console.log("db connected");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+app.get("/", (req, res) => {
+  res.json({ mes: "hello bruhhh!!" });
+});
+
+const middleWareFn = require("./Middleware");
+
+app.use(middleWareFn);
+
+// console.log(middleWareFn, "muss");
+
+//import that register model here to use
+const regRoute = require("./routes/RegisterRoute");
+app.use(regRoute);
+
 //To save the incoming users
 let users = [];
 
@@ -73,27 +101,8 @@ io.on("connection", (socket) => {
   });
 });
 
-require("dotenv").config();
-
-app.use(express.json());
-
-const port = process.env.PORT || 8000;
-
-db.connect(process.env.URI)
-  .then((on) => {
-    console.log("db connected");
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-
-app.get("/", (req, res) => {
-  res.json({ mes: "hello bruhhh!!" });
-});
-
-//import that register model here to use
-const regRoute = require("./routes/RegisterRoute");
-app.use(regRoute);
+const chatRoute = require("./routes/ChatRoute");
+app.use(chatRoute, middleWareFn);
 
 //callback function make sure that server is running
 server.listen(port, () => {
