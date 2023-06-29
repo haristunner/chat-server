@@ -18,6 +18,7 @@ const ChatSchema = new schema(
     },
   },
   {
+    //timestamp added for time
     timestamps: true,
   }
 );

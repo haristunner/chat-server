@@ -23,10 +23,13 @@ const io = new Server(server, {
 
 require("dotenv").config();
 
+//VERY IMPORTANT
+//if its not used -> no json data will be received in server
 app.use(express.json());
 
 const port = process.env.PORT || 8000;
 
+//connect mongo Atlas
 db.connect(process.env.URI)
   .then((on) => {
     console.log("db connected");
@@ -102,12 +105,11 @@ io.on("connection", (socket) => {
 });
 
 const chatRoute = require("./routes/ChatRoute");
+
+//when two or more route used, middleware function be added
 app.use(chatRoute, middleWareFn);
 
 //callback function make sure that server is running
 server.listen(port, () => {
   console.log(`App listening on ${port}`);
 });
-
-//hari17
-//z6kzCKIn4rHqRAWF

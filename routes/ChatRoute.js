@@ -6,8 +6,11 @@ const chatModel = require("../models/ChatModel");
 
 router.post("/chat", (req, res) => {
   console.log(req.body);
+
+  //setting the given data in model
   const data = new chatModel(req.body);
 
+  //save in db
   data
     .save()
     .then((res) => {
@@ -23,6 +26,9 @@ router.get("/chat", async (req, res) => {
 
   const { sender, receiver } = req.query;
 
+  //find the messages for the corresponding user and
+  //sort by timestamp
+  //it will search in that chatmodel
   const data = await chatModel
     .find({
       $or: [
@@ -38,7 +44,9 @@ router.get("/chat", async (req, res) => {
     })
     .sort("createdAt");
 
-    console.log(data)
+  res.json(data);
+
+  console.log(data);
 });
 
 module.exports = router;
