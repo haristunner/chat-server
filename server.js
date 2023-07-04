@@ -64,7 +64,7 @@ const addUser = (userId, socketId) => {
 //To get whom to send the incoming message
 const getUser = (userId) => {
   console.log(users, userId);
-  const user = users.find((user) => user.userId === userId.userId);
+  const user = users.find((user) => user.userId === userId);
 
   console.log(user);
   return user ? user : null;
@@ -88,6 +88,8 @@ io.on("connection", (socket) => {
   socket.on("send", ({ sender, receiver, message }) => {
     //to find which user to send
     const user = getUser(receiver);
+
+    console.log(receiver, "receiver", user);
 
     if (user) {
       socket.to(user.socketId).emit("send", {
