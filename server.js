@@ -9,6 +9,8 @@ const db = require("mongoose");
 const { Server } = require("socket.io");
 const http = require("http");
 
+require("dotenv").config();
+
 app.use(cors());
 
 //creating httpserver
@@ -16,12 +18,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT,
     methods: ["GET", "POST"],
   },
 });
-
-require("dotenv").config();
 
 //VERY IMPORTANT
 //if its not used -> no json data will be received in server

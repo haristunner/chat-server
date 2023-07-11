@@ -2,14 +2,24 @@ const express = require("express");
 
 const router = express.Router();
 
+const CryptoJS = require("crypto-js");
+
 //importing model
 const registerModel = require("../models/RegisterModel");
 
 router.post("/register", async (req, res) => {
-  //create instance of that model
-  const data = new registerModel(req.body);
+  const { email, username, password } = req.body;
 
-  console.log(req.body);
+  const encrypted = CryptoJS.AES.encrypt(
+    password,
+    process.env.SECRET_KEY
+  ).toString();
+  console.log(encrypted, process.env.SECRET_KEY);
+
+  //create instance of that model
+  const data = new registerModel({ email, username, password: encrypted });
+
+  // console.log(email, username, password);
 
   //this exist returns the document of that matched email
   const exist = await registerModel.findOne({ email: req.body.email });
@@ -57,18 +67,31 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const exist = await registerModel.findOne({
     email: req.body.email,
-    password: req.body.password,
   });
 
-  console.log(exist, "exist");
+  //if email matches
+  if (exist.password) {
+    //decrypt the password from db
+    const decrypt = CryptoJS.AES.decrypt(
+      exist.password,
+      process.env.SECRET_KEY
+    ).toString(CryptoJS.enc.Utf8);
 
-  if (!exist) {
-    res.json({ message: "no" });
-    console.log("nooo");
+    //check decrypted password and req password
+    decrypt === req.body.password
+      ? res.json({ message: "matched", username: exist.username })
+      : res.json({ message: "no" });
   } else {
-    res.json({ message: "matched", username: exist.username });
-    console.log("matched!!!");
+    res.json({ message: "no" });
   }
+
+  // if (!exist) {
+  //   res.json({ message: "no" });
+  //   console.log("nooo");
+  // } else {
+  //   res.json({ message: "matched", username: exist.username });
+  //   console.log("matched!!!");
+  // }
 });
 
 module.exports = router;
