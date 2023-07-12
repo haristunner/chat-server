@@ -69,8 +69,14 @@ router.post("/login", async (req, res) => {
     email: req.body.email,
   });
 
-  //if email matches
-  if (exist.password) {
+  console.log(exist);
+
+  //if new user
+  if (exist === null) {
+    res.json({ message: "new user" });
+  }
+  //checks the password if email is matched
+  else if (exist.password) {
     //decrypt the password from db
     const decrypt = CryptoJS.AES.decrypt(
       exist.password,
